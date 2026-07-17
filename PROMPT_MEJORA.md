@@ -123,193 +123,147 @@ El participante que recibirá este proyecto los debe encontrar y resolver él mi
 
 INPUT
 Aquí está la cadena con los archivos:
-package com.pragma.payment.domain.model;
+// === ARCHIVO: src/main/java/com/example/application/Application.java ===
+package com.example.application;
 
-public class Payment {
-    private String id;
-    private String amount;
-    private String currency;
-    private String status;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-    public Payment() {}
-
-    public Payment(String id, String amount, String currency, String status) {
-        this.id = id;
-        this.amount = amount;
-        this.currency = currency;
-        this.status = status;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getAmount() {
-        return amount;
-    }
-
-    public void setAmount(String amount) {
-        this.amount = amount;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+@SpringBootApplication
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
     }
 }
-// === ARCHIVO: src/main/java/com/pragma/payment/application/service/PaymentService.java ===
-package com.pragma.payment.application.service;
 
-import com.pragma.payment.domain.model.Payment;
-
-import java.util.List;
-
-public interface PaymentService {
-    List<Payment> getAllPayments();
-    Payment getPaymentById(String id);
-    Payment createPayment(Payment payment);
-    Payment updatePayment(String id, Payment payment);
-    void deletePayment(String id);
-}
-// === ARCHIVO: src/main/java/com/pragma/payment/application/service/PaymentServiceImpl.java ===
-package com.pragma.payment.application.service;
-
-import com.pragma.payment.domain.model.Payment;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-@Service
-public class PaymentServiceImpl implements PaymentService {
-    private final List<Payment> payments = new ArrayList<>();
-
-    @Override
-    public List<Payment> getAllPayments() {
-        return new ArrayList<>(payments);
-    }
-
-    @Override
-    public Payment getPaymentById(String id) {
-        return payments.stream()
-               .filter(payment -> payment.getId().equals(id))
-               .findFirst()
-               .orElse(null);
-    }
-
-    @Override
-    public Payment createPayment(Payment payment) {
-        payments.add(payment);
-        return payment;
-    }
-
-    @Override
-    public Payment updatePayment(String id, Payment payment) {
-        Optional<Payment> optionalPayment = payments.stream()
-               .filter(p -> p.getId().equals(id))
-               .findFirst();
-        if (optionalPayment.isPresent()) {
-            Payment existingPayment = optionalPayment.get();
-            existingPayment.setAmount(payment.getAmount());
-            existingPayment.setCurrency(payment.getCurrency());
-            existingPayment.setStatus(payment.getStatus());
-            return existingPayment;
-        }
-        return null;
-    }
-
-    @Override
-    public void deletePayment(String id) {
-        payments.removeIf(payment -> payment.getId().equals(id));
-    }
-}
-// === ARCHIVO: src/main/java/com/pragma/payment/infrastructure/security/SecurityConfig.java ===
-package com.pragma.payment.infrastructure.security;
+// === ARCHIVO: src/main/java/com/example/application/config/SecurityConfig.java ===
+package com.example.application.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.example.application.config.JwtRequestFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-           .csrf().disable()
-           .authorizeRequests()
-               .antMatchers("/api/payments").authenticated()
-               .anyRequest().permitAll()
-           .and()
-           .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+    public JwtRequestFilter jwtRequestFilter() {
+        return new JwtRequestFilter();
     }
-
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+           .authorizeRequests().antMatchers("/authenticate").permitAll()
+           .anyRequest().authenticated()
+           .and().sessionManagement().disable();
+        http.addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }
-// === ARCHIVO: src/main/java/com/pragma/payment/infrastructure/security/JwtTokenUtil.java ===
-package com.pragma.payment.infrastructure.security;
+
+// === ARCHIVO: src/main/java/com/example/domain/model/User.java ===
+package com.example.domain.model;
+
+import java.util.List;
+
+public record User(Long id, String username, String password, List<String> roles) {}
+
+// === ARCHIVO: src/main/java/com/example/infrastructure/persistence/UserRepository.java ===
+package com.example.infrastructure.persistence;
+
+import com.example.domain.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    User findByUsername(String username);
+}
+
+// === ARCHIVO: src/main/resources/application.properties ===
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled=true
+
+// === ARCHIVO: src/test/java/com/example/application/ApplicationTests.java ===
+package com.example.application;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class ApplicationTests {
+    @Test
+    void contextLoads() {
+    }
+}
+
+// === ARCHIVO: src/main/java/com/example/application/config/JwtTokenUtil.java ===
+package com.example.application.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
-
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 @Component
 public class JwtTokenUtil {
-    private static final String SECRET_KEY = "secret";
-
-    public String generateToken(String username) {
+    private String secret = "secret";
+    public String generateToken(String subject) {
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims, subject);
+    }
+    private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
-               .setSubject(username)
-               .setIssuedAt(new Date())
+               .setClaims(claims)
+               .setSubject(subject)
+               .setIssuedAt(new Date(System.currentTimeMillis()))
                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-               .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+               .signWith(SignatureAlgorithm.HS256, secret)
                .compact();
     }
-
-    public String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
-        return claims.getSubject();
+    public Boolean validateToken(String token, User userDetails) {
+        final String username = getUsernameFromToken(token);
+        return (username.equals(userDetails.getUsername()) &&!isTokenExpired(token));
     }
-
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    private Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
+    }
+    public String getUsernameFromToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
+    }
+    public Date getExpirationDateFromToken(String token) {
+        return getClaimFromToken(token, Claims::getExpiration);
+    }
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = getAllClaimsFromToken(token);
+        return claimsResolver.apply(claims);
+    }
+    private Claims getAllClaimsFromToken(String token) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 }
-// === ARCHIVO: src/main/java/com/pragma/payment/infrastructure/security/JwtAuthenticationFilter.java ===
-package com.pragma.payment.infrastructure.security;
 
+// === ARCHIVO: src/main/java/com/example/application/config/JwtRequestFilter.java ===
+package com.example.application.config;
+
+import com.example.application.config.JwtTokenUtil;
+import com.example.domain.model.User;
+import com.example.infrastructure.persistence.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import javax.servlet.FilterChain;
@@ -319,144 +273,72 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtTokenUtil jwtTokenUtil;
-
-    public JwtAuthenticationFilter(JwtTokenUtil jwtTokenUtil) {
-        this.jwtTokenUtil = jwtTokenUtil;
-    }
-
+public class JwtRequestFilter extends OncePerRequestFilter {
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private UserDetailsService userDetailsService;
+    @Autowired
+    private UserRepository userRepository;
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String header = request.getHeader("Authorization");
-
-        if (header!= null && header.startsWith("Bearer ")) {
-            String token = header.substring(7);
-            if (jwtTokenUtil.validateToken(token)) {
-                String username = jwtTokenUtil.getUsernameFromToken(token);
-                // Aquí deberías crear un objeto de autenticación y establecerlo en el contexto de seguridad
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        final String requestTokenHeader = request.getHeader("Authorization");
+        String username = null;
+        String jwtToken = null;
+        if (requestTokenHeader!= null && requestTokenHeader.startsWith("Bearer ")) {
+            jwtToken = requestTokenHeader.substring(7);
+            username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+        }
+        if (username!= null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            if (jwtTokenUtil.validateToken(jwtToken, (User) userDetails)) {
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                usernamePasswordAuthenticationToken
+                       .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
-        filterChain.doFilter(request, response);
+        chain.doFilter(request, response);
     }
 }
-// === ARCHIVO: src/main/java/com/pragma/payment/infrastructure/controller/PaymentController.java ===
-package com.pragma.payment.infrastructure.controller;
 
-import com.pragma.payment.application.service.PaymentService;
-import com.pragma.payment.domain.model.Payment;
+// === ARCHIVO: src/main/java/com/example/application/controller/AuthController.java ===
+package com.example.application.controller;
+
+import com.example.application.config.JwtTokenUtil;
+import com.example.domain.model.User;
+import com.example.infrastructure.persistence.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
-@RequestMapping("/api/payments")
-public class PaymentController {
+@RequestMapping("/api/auth")
+public class AuthController {
     @Autowired
-    private PaymentService paymentService;
-
-    @GetMapping
-    public ResponseEntity<List<Payment>> getAllPayments() {
-        return ResponseEntity.ok(paymentService.getAllPayments());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Payment> getPaymentById(@PathVariable String id) {
-        Payment payment = paymentService.getPaymentById(id);
-        if (payment!= null) {
-            return ResponseEntity.ok(payment);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @PostMapping
-    public ResponseEntity<Payment> createPayment(@RequestBody Payment payment) {
-        return ResponseEntity.ok(paymentService.createPayment(payment));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Payment> updatePayment(@PathVariable String id, @RequestBody Payment payment) {
-        Payment updatedPayment = paymentService.updatePayment(id, payment);
-        if (updatedPayment!= null) {
-            return ResponseEntity.ok(updatedPayment);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePayment(@PathVariable String id) {
-        paymentService.deletePayment(id);
-        return ResponseEntity.noContent().build();
-    }
-}
-// === ARCHIVO: src/main/resources/application.yml ===
-server:
-  port: 8080
-spring:
-  security:
-    user:
-      name: user
-      password: password
-
-// === ARCHIVO: src/test/java/com/pragma/payment/application/service/PaymentServiceTest.java ===
-package com.pragma.payment.application.service;
-
-import com.pragma.payment.domain.model.Payment;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
-
-@SpringBootTest
-public class PaymentServiceTest {
+    private AuthenticationManager authenticationManager;
     @Autowired
-    private PaymentService paymentService;
-
-    @Test
-    public void testGetAllPayments() {
-        List<Payment> payments = paymentService.getAllPayments();
-        assertNotNull(payments);
-    }
-
-    @Test
-    public void testGetPaymentById() {
-        Payment payment = new Payment("1", "100", "USD", "pending");
-        paymentService.createPayment(payment);
-        Payment retrievedPayment = paymentService.getPaymentById("1");
-        assertNotNull(retrievedPayment);
-        assertEquals(payment.getId(), retrievedPayment.getId());
-    }
-
-    @Test
-    public void testCreatePayment() {
-        Payment payment = new Payment("1", "100", "USD", "pending");
-        Payment createdPayment = paymentService.createPayment(payment);
-        assertNotNull(createdPayment);
-        assertEquals(payment.getId(), createdPayment.getId());
-    }
-
-    @Test
-    public void testUpdatePayment() {
-        Payment payment = new Payment("1", "100", "USD", "pending");
-        paymentService.createPayment(payment);
-        Payment updatedPayment = new Payment("1", "200", "USD", "completed");
-        Payment result = paymentService.updatePayment("1", updatedPayment);
-        assertNotNull(result);
-        assertEquals(updatedPayment.getAmount(), result.getAmount());
-    }
-
-    @Test
-    public void testDeletePayment() {
-        Payment payment = new Payment("1", "100", "USD", "pending");
-        paymentService.createPayment(payment);
-        paymentService.deletePayment("1");
-        Payment deletedPayment = paymentService.getPaymentById("1");
-        assertNull(deletedPayment);
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private UserRepository userRepository;
+    @PostMapping("/authenticate")
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthRequest authRequest) throws AuthenticationException {
+        final Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        final User user = (User) authentication.getPrincipal();
+        final String token = jwtTokenUtil.generateToken(user.getUsername());
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 }
 
+record AuthRequest(String username, String password) {}
+
+record AuthResponse(String token) {}
 ```

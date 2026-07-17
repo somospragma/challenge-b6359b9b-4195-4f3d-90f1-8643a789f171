@@ -1,6 +1,6 @@
-# Implementación de Seguridad y Legibilidad en un Sistema de Gestión de Pagos
+# Fortalecer Habilidades de Framework y Seguridad en Aplicación Java
 
-El sistema de gestión de pagos de una empresa fintech necesita mejorar su seguridad y legibilidad del código. Se requiere implementar mecanismos de autenticación y autorización robustos, así como refactorizar el código existente para que sea más legible y menos redundante.
+Como desarrollador avanzado de backend en Java, tu tarea es fortalecer tu habilidad para escribir código legible y reducir la redundancia utilizando el framework más relevante. Además, debes implementar mecanismos de autenticación y comprender el uso de JWT en un proyecto enterprise.
 
 ## Informacion General
 
@@ -9,7 +9,7 @@ El sistema de gestión de pagos de una empresa fintech necesita mejorar su segur
 | **Tema** | Especialista en Framework con Proficiencia en Seguridad y Legibilidad de Código |
 | **Nivel** | advanced-l3 |
 | **Tipo** | practical |
-| **Tiempo estimado** | 8-10 horas |
+| **Tiempo estimado** | 5-6 horas |
 
 ## Fases del Reto
 
@@ -38,84 +38,84 @@ El sistema de gestión de pagos de una empresa fintech necesita mejorar su segur
 
 </details>
 
-### Fase 1: Análisis del Sistema Existente
+### Fase 1: Exploración y Configuración del Entorno
 
-**Objetivo:** Comprender las debilidades actuales del sistema en términos de seguridad y legibilidad del código.
+**Objetivo:** Configurar el entorno de desarrollo y explorar el framework seleccionado para entender sus componentes y capacidades.
 
-**Tiempo estimado:** 2 horas
+**Tiempo estimado:** 1 hora
 
 **Instrucciones:**
 
-- Evalúa el código existente para identificar puntos de vulnerabilidad y áreas de mejora en cuanto a legibilidad.
-- Documenta tus hallazgos y propone al menos dos mejoras específicas.
+- Identifica y configura el framework más relevante para Java en tu entorno de desarrollo.
+- Explora la documentación del framework para entender sus componentes principales y cómo pueden ser utilizados para escribir código más legible y reducir redundancia.
 
-**Entregable:** Documento de análisis con propuestas de mejora.
+**Entregable:** Entorno de desarrollo configurado y resumen de los componentes principales del framework.
 
 <details>
 <summary>Pistas de conocimiento</summary>
 
-- Considera los estándares de seguridad comunes en sistemas de pagos.
-- Piensa en patrones de diseño que puedan mejorar la legibilidad del código.
+- Investiga las mejores prácticas para configurar el entorno de desarrollo con el framework seleccionado.
+- Considera cómo el framework puede ayudarte a escribir código más legible y reducir redundancia.
 
 </details>
 
 ### Fase 2: Implementación de Mecanismos de Autenticación
 
-**Objetivo:** Implementar al menos dos mecanismos de autenticación robustos en el sistema.
+**Objetivo:** Implementar al menos dos mecanismos de autenticación y comprender el uso de JWT.
 
-**Tiempo estimado:** 3 horas
+**Tiempo estimado:** 2 horas
 
 **Instrucciones:**
 
-- Selecciona dos mecanismos de autenticación adecuados para el sistema de gestión de pagos.
-- Implementa estos mecanismos y asegúrate de que cumplan con los estándares de seguridad.
-- Documenta tu proceso y las decisiones tomadas.
+- Implementa al menos dos mecanismos de autenticación en tu aplicación.
+- Investiga y comprende el uso de JWT para la autenticación y cómo puede ser integrado en tu aplicación.
 
-**Entregable:** Código implementado y documentado con los mecanismos de autenticación.
+**Entregable:** Aplicación con dos mecanismos de autenticación implementados y documentación sobre el uso de JWT.
 
 <details>
 <summary>Pistas de conocimiento</summary>
 
-- Investiga sobre los diferentes tipos de autenticación y sus ventajas/desventajas.
-- Considera la integración de JWT para la gestión de sesiones.
+- Investiga diferentes tipos de mecanismos de autenticación y selecciona al menos dos para implementar.
+- Lee sobre JWT y cómo puede ser utilizado para mejorar la seguridad de tu aplicación.
 
 </details>
 
-### Fase 3: Refactorización del Código
+### Fase 3: Refactorización y Optimización del Código
 
-**Objetivo:** Refactorizar el código existente para mejorar su legibilidad y reducir la redundancia.
+**Objetivo:** Refactorizar el código para mejorar la legibilidad y reducir la redundancia utilizando el framework seleccionado.
 
-**Tiempo estimado:** 3 horas
+**Tiempo estimado:** 2 horas
 
 **Instrucciones:**
 
-- Identifica áreas del código que pueden ser refactorizadas para mejorar la legibilidad.
-- Aplica patrones de diseño y buenas prácticas para refactorizar el código.
-- Documenta las mejoras realizadas y justifica tus decisiones.
+- Refactoriza el código de tu aplicación para mejorar la legibilidad y reducir la redundancia utilizando el framework seleccionado.
+- Identifica y corrige errores comunes en tu implementación.
 
-**Entregable:** Código refactorizado y documentado.
+**Entregable:** Código refactorizado con mejor legibilidad y menor redundancia, y documentación de los cambios realizados.
 
 <details>
 <summary>Pistas de conocimiento</summary>
 
-- Revisa los principios SOLID y cómo pueden aplicarse en tu refactorización.
-- Considera el uso de herramientas de análisis de código para identificar redundancias.
+- Identifica patrones de código repetitivo y busca formas de reducir la redundancia utilizando el framework.
+- Lee sobre mejores prácticas para escribir código legible y aplica estas prácticas en tu refactorización.
 
 </details>
 
 ## Dimensiones Evaluadas
 
-- **queEs**: ¿Qué son los mecanismos de autenticación y por qué son importantes en un sistema de gestión de pagos?
-- **paraQueSirve**: ¿Para qué sirve la refactorización del código en términos de legibilidad y mantenimiento?
-- **comoSeUsa**: ¿Cómo se aplican los patrones de diseño en la refactorización del código?
-- **erroresComunes**: ¿Cuáles son los errores comunes al implementar mecanismos de autenticación y cómo se pueden evitar?
-- **queDecisionesImplica**: ¿Qué decisiones implica la selección de mecanismos de autenticación y cómo afectan la seguridad del sistema?
+- **queEs**: ¿Qué es un framework y por qué es importante en el desarrollo de aplicaciones?
+- **paraQueSirve**: ¿Para qué sirve JWT en la autenticación y cómo se integra en una aplicación Java?
+- **comoSeUsa**: ¿Cómo se implementan mecanismos de autenticación en una aplicación Java utilizando un framework?
+- **erroresComunes**: ¿Cuáles son los errores comunes al implementar autenticación y cómo se pueden evitar?
+- **queDecisionesImplica**: ¿Qué decisiones implica refactorizar el código para mejorar la legibilidad y reducir la redundancia?
 
 ## Criterios de Evaluacion
 
-- Implementación de al menos dos mecanismos de autenticación robustos.
+- Configuración correcta del entorno de desarrollo con el framework seleccionado.
+- Implementación de al menos dos mecanismos de autenticación.
+- Comprensión y uso de JWT en la autenticación.
 - Refactorización del código para mejorar la legibilidad y reducir la redundancia.
-- Documentación clara y completa del proceso y las decisiones tomadas.
+- Documentación clara y concisa de los cambios realizados.
 
 ---
 
